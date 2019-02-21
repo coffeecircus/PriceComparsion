@@ -16,3 +16,4 @@ class SkincarepricecomparsionItem(scrapy.Item):
     id = scrapy.Field()
     in_stock = scrapy.Field()
     offer = scrapy.Field()
+    img_url = scrapy.Field()

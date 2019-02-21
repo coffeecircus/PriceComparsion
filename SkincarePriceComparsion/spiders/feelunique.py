@@ -16,12 +16,14 @@ class LookfantasticSpider(scrapy.Spider):
         # brand = contents.xpath('@data-product-title').extract()
         products = response.xpath("//*[@id='divSearchResults']/child::div/child::div/div")
         for product in products:
-            id = product.xpath("span").xpath('@data-product-id').extract()
-            price = product.xpath("span").xpath('@data-product-price').extract()
-            brand = product.xpath("span").xpath('@data-product-brand').extract()
-            product_name = product.xpath("span").xpath('@data-product-title').extract()
+            id = product.xpath("span").xpath('@data-product-id').extract()[0]
+            price = product.xpath("span").xpath('@data-product-price').extract()[0]
+            brand = product.xpath("span").xpath('@data-product-brand').extract()[0]
+            product_name = product.xpath("span").xpath('@data-product-title').extract()[0]
             in_stock = product.xpath("div[2]/a/text()").extract()[0] == "Add to basket"
             offer = product.xpath("div[2]/div[1]/div/div/a/div/p/text()").extract()
+            img_url = product.xpath("div[1]/div/a[1]/img").xpath("@src").extract()[0]
+
             if offer != []:
                 offer = offer[0].strip()
             else:
@@ -33,6 +35,7 @@ class LookfantasticSpider(scrapy.Spider):
             item["product_name"] = product_name
             item["in_stock"] = in_stock
             item["offer"] = offer
+            item["img_url"] = img_url
             yield item
 
         #calculate page numbers
@@ -40,6 +43,6 @@ class LookfantasticSpider(scrapy.Spider):
         page_number = int(page_number_location.xpath("@data-total-pages").extract()[0])
 
         #go to next page
-        # for i in range(2,page_number+1):
-        #     url = "https://www.lookfantastic.com/health-beauty/face/view-all-skincare.list?pageNumber={}".format(str(i))
-        #     yield scrapy.http.Request(url, callback=self.parse)
+        for i in range(2,page_number+1):
+            url = "https://www.lookfantastic.com/health-beauty/face/view-all-skincare.list?pageNumber={}".format(str(i))
+            yield scrapy.http.Request(url, callback=self.parse)
