@@ -3,8 +3,8 @@ import scrapy
 from SkincarePriceComparsion.items import SkincarepricecomparsionItem
 
 
-class FeeluniqueSpider(scrapy.Spider):
-    name = 'feelunique'
+class LookfantasticSpider(scrapy.Spider):
+    name = 'lookfantastic'
     allowed_domains = ['lookfantastic.com']
     start_urls = ["https://www.lookfantastic.com/health-beauty/face/view-all-skincare.list?pageNumber=1"]
 
@@ -14,15 +14,25 @@ class FeeluniqueSpider(scrapy.Spider):
         # id = contents.xpath('@data-product-id').extract()
         # price = contents.xpath('@data-product-price').extract()
         # brand = contents.xpath('@data-product-title').extract()
-        products = response.xpath("//*[@id='divSearchResults']/child::div/child::div/div/span")
+        products = response.xpath("//*[@id='divSearchResults']/child::div/child::div/div")
         for product in products:
-            id = product.xpath('@data-product-id').extract()
-            price = product.xpath('@data-product-price').extract()
-            brand = product.xpath('@data-product-title').extract()
-            print()
+            id = product.xpath("span").xpath('@data-product-id').extract()
+            price = product.xpath("span").xpath('@data-product-price').extract()
+            brand = product.xpath("span").xpath('@data-product-brand').extract()
+            product_name = product.xpath("span").xpath('@data-product-title').extract()
+            in_stock = product.xpath("div[2]/a/text()").extract()[0] == "Add to basket"
+            offer = product.xpath("div[2]/div[1]/div/div/a/div/p/text()").extract()
+            if offer != []:
+                offer = offer[0].strip()
+            else:
+                offer = ""
+
             item["id"] = id
             item["price"] = price
             item["brand"] = brand
+            item["product_name"] = product_name
+            item["in_stock"] = in_stock
+            item["offer"] = offer
             yield item
 
         #calculate page numbers
@@ -30,6 +40,6 @@ class FeeluniqueSpider(scrapy.Spider):
         page_number = int(page_number_location.xpath("@data-total-pages").extract()[0])
 
         #go to next page
-        for i in range(2,page_number+1):
-            url = "https://www.lookfantastic.com/health-beauty/face/view-all-skincare.list?pageNumber={}".format(str(i))
-            yield scrapy.http.Request(url, callback=self.parse)
+        # for i in range(2,page_number+1):
+        #     url = "https://www.lookfantastic.com/health-beauty/face/view-all-skincare.list?pageNumber={}".format(str(i))
+        #     yield scrapy.http.Request(url, callback=self.parse)
