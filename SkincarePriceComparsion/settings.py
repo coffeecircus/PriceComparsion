@@ -52,9 +52,11 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'SkincarePriceComparsion.middlewares.SkincarepricecomparsionDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    #'SkincarePriceComparsion.middlewares.SkincarepricecomparsionDownloaderMiddleware': 543,
+    'SkincarePriceComparsion.middlewares.RandomUserAgentMiddlware': 543,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html

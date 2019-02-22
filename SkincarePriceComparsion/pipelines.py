@@ -12,8 +12,12 @@ class SkincarepricecomparsionPipeline(object):
             id = str(item["id"])
             price = str(item["price"])
             brand = str(item["brand"])
-            fb = open("/Users/coffeecircus/Desktop/PriceComparisonWebsite/SkincarePriceComparsion/result.txt","a+")
-            fb.write(id+price+brand+'\n')
+            product_name = str(item["product_name"])
+            in_stock = str(item["in_stock"])
+            offer = str(item["offer"])
+
+            fb = open("result.txt","a+")
+            fb.write(id+price+brand+product_name+in_stock+offer+'\n')
             fb.close()
         except:
             pass
